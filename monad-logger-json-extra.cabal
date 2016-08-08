@@ -1,0 +1,52 @@
+name:                monad-logger-json-extra
+version:             0.1.0.0
+synopsis:            Wrappers around "Control.Monad.Logger" that make it easy to produce properly JSON formatted log output.
+description:         Please see README.md
+homepage:            https://github.com/fpco/monad-logger-json-extra#readme
+license:             AllRightsReserved
+author:              Emanuel Borsboom
+maintainer:          manny@fpcomplete.com
+copyright:           2016 FP Complete
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Control.Monad.Logger.JSON.Extra
+  build-depends:       base >= 4.7 && < 5
+                     , aeson
+                     , auto-update
+                     , bytestring
+                     , fast-logger
+                     , monad-logger
+                     , template-haskell
+                     , text
+                     , transformers
+                     , unix
+                     , unix-time
+                     , wai-logger
+                     , yesod-core
+  default-language:    Haskell2010
+  ghc-options:         -Wall
+
+test-suite monad-logger-json-extra-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , aeson
+                     , bytestring
+                     , hspec
+                     , monad-logger-json-extra
+                     , tasty
+                     , tasty-hspec
+                     , text
+                     , unordered-containers
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/fpco/monad-logger-json-extra
