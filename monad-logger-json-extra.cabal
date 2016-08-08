@@ -23,6 +23,7 @@ library
                      , monad-logger
                      , template-haskell
                      , text
+                     , transformers
                      , unix
                      , unix-time
                      , wai-logger

@@ -52,6 +52,7 @@ module Control.Monad.Logger.JSON.Extra
 import Control.AutoUpdate
        (mkAutoUpdate, defaultUpdateSettings, updateAction)
 import Control.Monad (when)
+import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad.Logger
        hiding (runStderrLoggingT, runStdoutLoggingT,
                withChannelLogger, logDebug, logInfo, logWarn,
@@ -73,19 +74,18 @@ import qualified Data.ByteString.Char8 as S8
 import qualified Data.Text as T
 
 -- | Run a block using a 'MonadLogger' instance which prints to stdout.
-runStdoutJSONLoggingT :: LoggingT IO a -> IO a
+runStdoutJSONLoggingT :: (MonadIO m) => LoggingT m a -> m a
 runStdoutJSONLoggingT = flip runLoggerSetJSONLoggingT (newStdoutLoggerSet defaultBufSize)
 
 -- | Run a block using a 'MonadLogger' instance which prints to stderr.
-runStderrJSONLoggingT :: LoggingT IO a -> IO a
+runStderrJSONLoggingT :: (MonadIO m) => LoggingT m a -> m a
 runStderrJSONLoggingT = flip runLoggerSetJSONLoggingT (newStderrLoggerSet defaultBufSize)
 
 -- | Run a block using a 'MonadLogger' instance which pushes to the given 'LoggerSet'.
 -- Note: this flushes the LoggerSet after every log messages for immediate output instead of debounced.
-runLoggerSetJSONLoggingT :: LoggingT IO a -> IO LoggerSet -> IO a
+runLoggerSetJSONLoggingT :: (MonadIO m) => LoggingT m a -> IO LoggerSet -> m a
 runLoggerSetJSONLoggingT inner mkLoggerSet = do
-    getdate <- newJSONTimeCache
-    loggerSet <- mkLoggerSet
+    (getdate, loggerSet) <- liftIO $ (,) <$> newJSONTimeCache <*> mkLoggerSet
     let output loc src level msg = do
             json <- formatJSONLogMessage getdate loc src level msg
             pushLogStr loggerSet json
